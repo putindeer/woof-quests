@@ -1,0 +1,19 @@
+name: woof-quests
+version: '1.0'
+main: me.putindeer.woofquests.Main
+api-version: '1.21'
+description: "Plugin para las misiones del evento Desnudos y Asustados"
+author: putindeer
+
+commands:
+  quest:
+    description: Ver progreso de misiones
+  changeday:
+    description: Cambiar de día en el evento
+    permission: woof.admin
+  addprogress:
+    description: Agregar progreso a una misión de otro jugador
+    permission: woof.admin
+  revive:
+    description: Revive a un jugador muerto
+    permission: woof.admin
