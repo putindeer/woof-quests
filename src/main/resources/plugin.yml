@@ -17,3 +17,5 @@ commands:
   revive:
     description: Revive a un jugador muerto
     permission: woof.admin
+  players:
+    description: Permite ver los jugadores vivos o muertos

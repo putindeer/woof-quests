@@ -1,10 +1,7 @@
 package me.putindeer.woofquests.core;
 
 import me.putindeer.woofquests.Main;
-import me.putindeer.woofquests.commands.AddProgressCommand;
-import me.putindeer.woofquests.commands.ChangeDayCommand;
-import me.putindeer.woofquests.commands.QuestCommand;
-import me.putindeer.woofquests.commands.ReviveCommand;
+import me.putindeer.woofquests.commands.*;
 import me.putindeer.woofquests.listeners.GeneralListener;
 
 public class StartThings {
@@ -23,10 +20,12 @@ public class StartThings {
 
     public void disable() {
         plugin.questManager.saveData();
+        plugin.mannequin.cleanupAll();
     }
 
     private void registerManagers() {
         plugin.questManager = new QuestManager(plugin);
+        plugin.mannequin = new MannequinCombatSystem(plugin);
         new GeneralListener(plugin);
     }
 
@@ -35,5 +34,6 @@ public class StartThings {
         new ChangeDayCommand(plugin);
         new AddProgressCommand(plugin);
         new ReviveCommand(plugin);
+        new PlayersCommand(plugin);
     }
 }

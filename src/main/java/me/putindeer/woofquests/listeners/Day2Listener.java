@@ -21,6 +21,8 @@ public class Day2Listener implements Listener {
         switch (event.getEntityType()) {
             case WITHER_SKELETON -> questManager.addProgress(player.getUniqueId(), QuestRequirement.WITHER_SKELETONS);
             case BLAZE -> questManager.addProgress(player.getUniqueId(), QuestRequirement.BLAZES);
+            case PIGLIN -> questManager.addProgress(player.getUniqueId(), QuestRequirement.PIGLINS);
+            case PIGLIN_BRUTE -> questManager.addProgress(player.getUniqueId(), QuestRequirement.PIGLIN_BRUTES);
         }
     }
 }

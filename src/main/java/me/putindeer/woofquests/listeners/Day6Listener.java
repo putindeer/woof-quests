@@ -2,6 +2,7 @@ package me.putindeer.woofquests.listeners;
 
 import me.putindeer.woofquests.core.QuestManager;
 import me.putindeer.woofquests.core.QuestRequirement;
+import org.bukkit.entity.ElderGuardian;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wither;
@@ -16,6 +17,7 @@ public class Day6Listener implements Listener {
 
     private final QuestManager questManager;
     private final Map<UUID, Set<UUID>> witherDamagers = new HashMap<>();
+    private final Map<UUID, Set<UUID>> elderGuardianDamagers = new HashMap<>();
 
     public Day6Listener(QuestManager questManager) {
         this.questManager = questManager;
@@ -30,15 +32,37 @@ public class Day6Listener implements Listener {
     }
 
     @EventHandler
+    public void onElderGuardianDamage(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof ElderGuardian elderGuardian)) return;
+        if (!(event.getDamager() instanceof Player player)) return;
+
+        elderGuardianDamagers.computeIfAbsent(elderGuardian.getUniqueId(), k -> new HashSet<>()).add(player.getUniqueId());
+    }
+
+    @EventHandler
     public void onWitherDeath(EntityDeathEvent event) {
-        if (event.getEntityType() != EntityType.WITHER) return;
+        switch (event.getEntityType()) {
+            case GUARDIAN -> {
+                if (!(event.getEntity().getKiller() instanceof Player player)) return;
+                questManager.addProgress(player.getUniqueId(), QuestRequirement.GUARDIANS);
+            }
+            case WITHER -> {
+                UUID witherId = event.getEntity().getUniqueId();
+                Set<UUID> damagers = witherDamagers.remove(witherId);
 
-        UUID witherId = event.getEntity().getUniqueId();
-        Set<UUID> damagers = witherDamagers.remove(witherId);
+                if (damagers == null) return;
 
-        if (damagers == null) return;
+                damagers.forEach(uuid -> questManager.addProgress(uuid, QuestRequirement.WITHERS));
+            }
+            case ELDER_GUARDIAN -> {
+                UUID elderGuardianId = event.getEntity().getUniqueId();
+                Set<UUID> damagers = elderGuardianDamagers.remove(elderGuardianId);
 
-        damagers.forEach(uuid -> questManager.addProgress(uuid, QuestRequirement.WITHERS));
+                if (damagers == null) return;
+
+                damagers.forEach(uuid -> questManager.addProgress(uuid, QuestRequirement.ELDER_GUARDIANS));
+            }
+        }
     }
 }
 

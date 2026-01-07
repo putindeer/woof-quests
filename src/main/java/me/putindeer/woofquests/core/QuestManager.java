@@ -250,7 +250,7 @@ public class QuestManager {
         return failed;
     }
 
-    private boolean hasCompletedCurrentDayMission(UUID uuid) {
+    public boolean hasCompletedCurrentDayMission(UUID uuid) {
         PlayerQuestData data = questDataCache.get(uuid);
         if (data == null) {
             return false;
@@ -391,5 +391,36 @@ public class QuestManager {
                     "<green><bold>✓ ¡COMPLETASTE EL DÍA " + day + "!",
                     "<gold><bold>════════════════════════════");
         }
+    }
+
+    public String getDayProgressStringDetailed(Player player) {
+        int currentDay = getCurrentDay();
+        QuestRequirement[] requirements = QuestRequirement.getRequirementsForDay(currentDay);
+
+        if (requirements.length == 0) return "<gray>Sin misiones para este día";
+
+        int totalProgress = 0;
+        int totalRequired = 0;
+        int completed = 0;
+
+        for (QuestRequirement req : requirements) {
+            totalProgress += getProgress(player.getUniqueId(), req);
+            totalRequired += req.getRequired();
+            if (isCompleted(player.getUniqueId(), req)) completed++;
+        }
+
+        double percentage = totalRequired > 0 ? (double) totalProgress / totalRequired : 0.0;
+
+        String color = getSmoothGradientColor(percentage);
+
+        return color + "⏱ Misiones del día por completar: " + completed + "/" + requirements.length;
+    }
+
+    private String getSmoothGradientColor(double percentage) {
+        int red = (int) (255 * (1 - percentage));
+        int green = (int) (255 * percentage);
+        int blue = 0;
+
+        return String.format("<#%02X%02X%02X>", red, green, blue);
     }
 }

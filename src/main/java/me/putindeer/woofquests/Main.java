@@ -2,8 +2,10 @@ package me.putindeer.woofquests;
 
 import lombok.Getter;
 import me.putindeer.api.util.PluginUtils;
+import me.putindeer.woofquests.core.MannequinCombatSystem;
 import me.putindeer.woofquests.core.QuestManager;
 import me.putindeer.woofquests.core.StartThings;
+import org.bukkit.entity.Mannequin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
@@ -11,6 +13,7 @@ public final class Main extends JavaPlugin {
     public PluginUtils utils;
     public StartThings start;
     public QuestManager questManager;
+    public MannequinCombatSystem mannequin;
     @Override
     public void onEnable() {
         instance = this;

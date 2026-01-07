@@ -10,6 +10,8 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,12 +51,16 @@ public class ReviveCommand implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
+        List<String> list = new ArrayList<>();
+
         if (args.length == 1) {
-            return Bukkit.getOnlinePlayers().stream()
-                    .filter(player -> !questManager.isPlayerAlive(player.getUniqueId()))
-                    .map(Player::getName)
-                    .toList();
+            list.addAll(plugin.questManager.getDeadPlayers()
+                    .stream()
+                    .map(Bukkit::getOfflinePlayer).map(OfflinePlayer::getName).toList());
         }
-        return List.of();
+
+        list.removeIf(s -> s == null || !s.toLowerCase().startsWith(args[args.length - 1].toLowerCase()));
+        Collections.sort(list);
+        return list;
     }
 }

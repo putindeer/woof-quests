@@ -36,8 +36,11 @@ public class QuestCommand implements CommandExecutor {
         } else {
             String name = args[0];
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(name);
-            if (offlinePlayer.hasPlayedBefore()) {
+            if (plugin.questManager.isPlayerAlive(offlinePlayer.getUniqueId())) {
                 showProgress(player, offlinePlayer);
+            } else {
+                String message = player.getUniqueId() == offlinePlayer.getUniqueId() ? "¡Estás muerto!" : "¡Este jugador está muerto!";
+                plugin.utils.message(player, "<red>" + message + " No puedes ver el progreso.");
             }
         }
 
@@ -50,8 +53,8 @@ public class QuestCommand implements CommandExecutor {
             return;
         }
 
-        if (!questManager.isPlayerAlive(target.getUniqueId())) {
-            String message = player == target.getPlayer() ? "¡Estás muerto!" : "¡Este jugador está muerto!";
+        if (!plugin.questManager.isPlayerAlive(target.getUniqueId())) {
+            String message = player.getUniqueId() == target.getUniqueId() ? "¡Estás muerto!" : "¡Este jugador está muerto!";
             plugin.utils.message(player, "<red>" + message + " No puedes ver el progreso.");
             return;
         }

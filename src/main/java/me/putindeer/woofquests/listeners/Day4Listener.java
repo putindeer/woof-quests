@@ -21,6 +21,7 @@ public class Day4Listener implements Listener {
         switch (event.getEntityType()) {
             case EVOKER -> questManager.addProgress(player.getUniqueId(), QuestRequirement.EVOKERS);
             case VINDICATOR -> questManager.addProgress(player.getUniqueId(), QuestRequirement.VINDICATORS);
+            case PILLAGER -> questManager.addProgress(player.getUniqueId(), QuestRequirement.RAVAGERS);
         }
     }
 }
