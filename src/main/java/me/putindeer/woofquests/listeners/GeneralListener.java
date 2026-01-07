@@ -69,6 +69,7 @@ public class GeneralListener implements Listener {
 
         if (!questManager.isEventStarted()) return;
         if (!questManager.isPlayerAlive(player.getUniqueId())) return;
+        if (player.getGameMode() != GameMode.SURVIVAL) return;
         recentlyDisconnected.put(player.getUniqueId(), Bukkit.getCurrentTick());
         plugin.mannequin.createMannequin(player);
         Bukkit.getScheduler().runTaskLater(plugin, () -> recentlyDisconnected.remove(player.getUniqueId()), 5L);

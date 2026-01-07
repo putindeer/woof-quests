@@ -40,12 +40,7 @@ public class MannequinCombatSystem implements Listener {
         MannequinData data = new MannequinData(player.getUniqueId(), mannequin, savedItems);
         mannequinDataMap.put(player.getUniqueId(), data);
 
-        BukkitTask despawnTask = Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (mannequinDataMap.containsKey(player.getUniqueId()) && !mannequin.isDead()) {
-                MannequinData mannequinData = mannequinDataMap.get(player.getUniqueId());
-                removeMannequin(player.getUniqueId());
-            }
-        }, 20 * 30);
+        BukkitTask despawnTask = Bukkit.getScheduler().runTaskLater(plugin, () -> removeMannequin(mannequin), 20 * 30);
 
         data.setDespawnTask(despawnTask);
     }
@@ -78,8 +73,19 @@ public class MannequinCombatSystem implements Listener {
             data.getDespawnTask().cancel();
         }
 
-        data.getMannequin().remove();
+        Mannequin mannequin = data.getMannequin();
+        if (mannequin != null) {
+            data.getMannequin().remove();
+        }
         mannequinDataMap.remove(playerUUID);
+    }
+
+    public void removeMannequin(Mannequin mannequin) {
+        UUID uuid = getPlayerUUIDFromMannequin(mannequin);
+        mannequin.remove();
+        if (uuid != null) {
+            removeMannequin(uuid);
+        }
     }
 
     public boolean hasMannequin(UUID playerUUID) {
@@ -92,5 +98,6 @@ public class MannequinCombatSystem implements Listener {
 
     public void cleanupAll() {
         new HashSet<>(mannequinDataMap.keySet()).forEach(this::removeMannequin);
+        Bukkit.getWorlds().forEach(world -> world.getEntitiesByClass(Mannequin.class).forEach(Entity::remove));
     }
 }
