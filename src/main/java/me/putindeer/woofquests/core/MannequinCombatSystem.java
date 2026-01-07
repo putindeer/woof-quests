@@ -3,7 +3,9 @@ package me.putindeer.woofquests.core;
 import io.papermc.paper.datacomponent.item.ResolvableProfile;
 import me.putindeer.woofquests.Main;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.*;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -26,6 +28,8 @@ public class MannequinCombatSystem implements Listener {
 
         Mannequin mannequin = location.getWorld().spawn(location, Mannequin.class, CreatureSpawnEvent.SpawnReason.COMMAND);
 
+        forceLoadOrUnload(location, true);
+
         mannequin.setProfile(ResolvableProfile.resolvableProfile(player.getPlayerProfile()));
         mannequin.setCustomNameVisible(true);
         mannequin.setAbsorptionAmount(player.getAbsorptionAmount());
@@ -37,10 +41,10 @@ public class MannequinCombatSystem implements Listener {
 
         List<ItemStack> savedItems = new ArrayList<>(Arrays.stream(player.getInventory().getContents().clone()).toList());
 
-        MannequinData data = new MannequinData(player.getUniqueId(), mannequin, savedItems);
+        MannequinData data = new MannequinData(player.getUniqueId(), mannequin, savedItems, location);
         mannequinDataMap.put(player.getUniqueId(), data);
 
-        BukkitTask despawnTask = Bukkit.getScheduler().runTaskLater(plugin, () -> removeMannequin(mannequin), 20 * 30);
+        BukkitTask despawnTask = Bukkit.getScheduler().runTaskLater(plugin, () -> removeMannequin(player.getUniqueId()), 20 * 30);
 
         data.setDespawnTask(despawnTask);
     }
@@ -62,6 +66,20 @@ public class MannequinCombatSystem implements Listener {
         });
     }
 
+    public void forceLoadOrUnload(Location location, boolean load) {
+        World world = location.getWorld();
+
+        int centerX = location.getChunk().getX();
+        int centerZ = location.getChunk().getZ();
+
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                Chunk chunk = world.getChunkAt(centerX + dx, centerZ + dz);
+                chunk.setForceLoaded(load);
+            }
+        }
+    }
+
     public void removeMannequin(UUID playerUUID) {
         if (!mannequinDataMap.containsKey(playerUUID)) {
             return;
@@ -73,19 +91,13 @@ public class MannequinCombatSystem implements Listener {
             data.getDespawnTask().cancel();
         }
 
+        forceLoadOrUnload(data.getInitialLocation(), false);
+
         Mannequin mannequin = data.getMannequin();
         if (mannequin != null) {
             data.getMannequin().remove();
         }
         mannequinDataMap.remove(playerUUID);
-    }
-
-    public void removeMannequin(Mannequin mannequin) {
-        UUID uuid = getPlayerUUIDFromMannequin(mannequin);
-        mannequin.remove();
-        if (uuid != null) {
-            removeMannequin(uuid);
-        }
     }
 
     public boolean hasMannequin(UUID playerUUID) {
