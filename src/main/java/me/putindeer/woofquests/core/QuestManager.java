@@ -173,7 +173,7 @@ public class QuestManager {
     public void changeDay() {
         Set<UUID> failedPlayers = getPlayersWhoDidNotCompleteMission();
 
-        alivePlayers.forEach(player -> Bukkit.getOfflinePlayer(player).setWhitelisted(true));
+        alivePlayers.forEach(uuid -> Bukkit.getOfflinePlayer(uuid).setWhitelisted(true));
 
         failedPlayers.forEach(uuid -> {
             Player player = Bukkit.getPlayer(uuid);
@@ -185,9 +185,7 @@ public class QuestManager {
                 alivePlayers.remove(uuid);
                 deadPlayers.add(uuid);
                 waitingDeathPlayers.add(uuid);
-                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-                offlinePlayer.setWhitelisted(false);
-                plugin.utils.log("Jugador " + offlinePlayer.getName() + " eliminado por no completar misión (offline).");
+                plugin.utils.log("Jugador " + Bukkit.getOfflinePlayer(uuid).getName() + " eliminado por no completar misión (offline).");
             }
         });
 

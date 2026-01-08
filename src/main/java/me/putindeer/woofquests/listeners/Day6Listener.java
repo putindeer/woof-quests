@@ -15,7 +15,6 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.*;
 
 public class Day6Listener implements Listener {
-
     private final QuestManager questManager;
     private final Map<UUID, Set<UUID>> witherDamagers = new HashMap<>();
     private final Map<UUID, Set<UUID>> elderGuardianDamagers = new HashMap<>();

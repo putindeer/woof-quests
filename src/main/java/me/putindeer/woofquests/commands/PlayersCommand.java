@@ -1,7 +1,6 @@
 package me.putindeer.woofquests.commands;
 
 import me.putindeer.woofquests.Main;
-import me.putindeer.woofquests.core.QuestManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -17,11 +16,9 @@ import java.util.stream.Collectors;
 
 public class PlayersCommand implements TabExecutor {
     private final Main plugin;
-    private final QuestManager questManager;
 
     public PlayersCommand(Main plugin) {
         this.plugin = plugin;
-        this.questManager = plugin.questManager;
         Objects.requireNonNull(plugin.getCommand("players")).setExecutor(this);
     }
 

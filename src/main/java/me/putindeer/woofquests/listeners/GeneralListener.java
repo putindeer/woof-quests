@@ -169,7 +169,13 @@ public class GeneralListener implements Listener {
     private boolean isAllowedArmor(Material type) {
         return type == Material.CARVED_PUMPKIN
                 || type == Material.ELYTRA
-                || type == Material.PLAYER_HEAD;
+                || type == Material.PLAYER_HEAD
+                || type == Material.SKELETON_SKULL
+                || type == Material.WITHER_SKELETON_SKULL
+                || type == Material.ZOMBIE_HEAD
+                || type == Material.CREEPER_HEAD
+                || type == Material.DRAGON_HEAD
+                || type == Material.PIGLIN_HEAD;
     }
 
     @EventHandler
