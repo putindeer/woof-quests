@@ -47,7 +47,7 @@ public class PlayersCommand implements TabExecutor {
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
         List<String> list = new ArrayList<>();
 
-        if (args.length == 0) {
+        if (args.length == 1) {
             list.addAll(List.of("dead", "alive"));
         }
 
