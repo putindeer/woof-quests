@@ -8,6 +8,10 @@ import org.bukkit.block.data.type.Vault;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.bukkit.potion.PotionEffectType;
+
+import java.util.Set;
 
 public class Day5Listener implements Listener {
 
@@ -32,6 +36,20 @@ public class Day5Listener implements Listener {
             questManager.addProgress(opener.getUniqueId(), QuestRequirement.OMINOUS_VAULTS);
         } else {
             questManager.addProgress(opener.getUniqueId(), QuestRequirement.VAULTS);
+        }
+    }
+
+    private final Set<PotionEffectType> BLOCKED_EFFECTS = Set.of(PotionEffectType.INVISIBILITY, PotionEffectType.RESISTANCE);
+
+    @EventHandler
+    public void onPotionGain(EntityPotionEffectEvent event) {
+        if (event.getAction() != EntityPotionEffectEvent.Action.ADDED) return;
+        if (event.getNewEffect() == null) return;
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (!questManager.isPlayerAlive(player.getUniqueId())) return;
+
+        if (BLOCKED_EFFECTS.contains(event.getNewEffect().getType())) {
+            event.setCancelled(true);
         }
     }
 }

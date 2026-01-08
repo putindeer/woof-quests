@@ -3,13 +3,14 @@ package me.putindeer.woofquests.listeners;
 import me.putindeer.woofquests.core.QuestManager;
 import me.putindeer.woofquests.core.QuestRequirement;
 import org.bukkit.entity.ElderGuardian;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 
@@ -62,6 +63,20 @@ public class Day6Listener implements Listener {
 
                 damagers.forEach(uuid -> questManager.addProgress(uuid, QuestRequirement.ELDER_GUARDIANS));
             }
+        }
+    }
+
+    private final Set<PotionEffectType> BLOCKED_EFFECTS = Set.of(PotionEffectType.INVISIBILITY, PotionEffectType.RESISTANCE);
+
+    @EventHandler
+    public void onPotionGain(EntityPotionEffectEvent event) {
+        if (event.getAction() != EntityPotionEffectEvent.Action.ADDED) return;
+        if (event.getNewEffect() == null) return;
+        if (!(event.getEntity() instanceof Player player)) return;
+        if (!questManager.isPlayerAlive(player.getUniqueId())) return;
+
+        if (BLOCKED_EFFECTS.contains(event.getNewEffect().getType())) {
+            event.setCancelled(true);
         }
     }
 }
