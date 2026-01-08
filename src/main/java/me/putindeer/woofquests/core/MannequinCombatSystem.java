@@ -91,12 +91,13 @@ public class MannequinCombatSystem implements Listener {
             data.getDespawnTask().cancel();
         }
 
-        forceLoadOrUnload(data.getInitialLocation(), false);
-
         Mannequin mannequin = data.getMannequin();
         if (mannequin != null) {
             data.getMannequin().remove();
         }
+
+        forceLoadOrUnload(data.getInitialLocation(), false);
+
         mannequinDataMap.remove(playerUUID);
     }
 
