@@ -2,14 +2,17 @@ package me.putindeer.woofquests.listeners;
 
 import me.putindeer.woofquests.core.QuestManager;
 import me.putindeer.woofquests.core.QuestRequirement;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.ElderGuardian;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
@@ -40,7 +43,7 @@ public class Day6Listener implements Listener {
     }
 
     @EventHandler
-    public void onWitherDeath(EntityDeathEvent event) {
+    public void onEntityDeath(EntityDeathEvent event) {
         switch (event.getEntityType()) {
             case GUARDIAN -> {
                 if (!(event.getEntity().getKiller() instanceof Player player)) return;
@@ -61,6 +64,37 @@ public class Day6Listener implements Listener {
                 if (damagers == null) return;
 
                 damagers.forEach(uuid -> questManager.addProgress(uuid, QuestRequirement.ELDER_GUARDIANS));
+            }
+        }
+    }
+
+    @EventHandler
+    public void onWitherExplode(EntityExplodeEvent event) {
+        EntityType type = event.getEntityType();
+        if (type != EntityType.WITHER && type != EntityType.WITHER_SKULL) return;
+
+        Location center = event.getLocation();
+
+        World world = center.getWorld();
+        if (world.getEnvironment() != World.Environment.NETHER) return;
+
+        if (center.getY() <= 90) return;
+
+        int radius = 2;
+
+        for (int x = -radius; x <= radius; x++) {
+            for (int y = -radius; y <= radius; y++) {
+                for (int z = -radius; z <= radius; z++) {
+                    Block block = world.getBlockAt(
+                            center.getBlockX() + x,
+                            center.getBlockY() + y,
+                            center.getBlockZ() + z
+                    );
+
+                    if (block.getType() != Material.BEDROCK) continue;
+
+                    block.setType(Material.AIR, false);
+                }
             }
         }
     }
