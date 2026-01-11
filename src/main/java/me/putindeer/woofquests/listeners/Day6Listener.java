@@ -6,14 +6,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.ElderGuardian;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Wither;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -29,7 +27,8 @@ public class Day6Listener implements Listener {
     @EventHandler
     public void onWitherDamage(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof Wither wither)) return;
-        if (!(event.getDamager() instanceof Player player)) return;
+        Player player = getDamager(event);
+        if (player == null) return;
 
         witherDamagers.computeIfAbsent(wither.getUniqueId(), k -> new HashSet<>()).add(player.getUniqueId());
     }
@@ -37,7 +36,8 @@ public class Day6Listener implements Listener {
     @EventHandler
     public void onElderGuardianDamage(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof ElderGuardian elderGuardian)) return;
-        if (!(event.getDamager() instanceof Player player)) return;
+        Player player = getDamager(event);
+        if (player == null) return;
 
         elderGuardianDamagers.computeIfAbsent(elderGuardian.getUniqueId(), k -> new HashSet<>()).add(player.getUniqueId());
     }
@@ -66,6 +66,18 @@ public class Day6Listener implements Listener {
                 damagers.forEach(uuid -> questManager.addProgress(uuid, QuestRequirement.ELDER_GUARDIANS));
             }
         }
+    }
+
+    public @Nullable Player getDamager(EntityDamageByEntityEvent event) {
+        Player damager;
+        switch (event.getDamager()) {
+            case Player player -> damager = player;
+            case Arrow arrow when arrow.getShooter() instanceof Player -> damager = (Player) arrow.getShooter();
+            case Trident trident when trident.getShooter() instanceof Player -> damager = (Player) trident.getShooter();
+            case SpectralArrow spectralArrow when spectralArrow.getShooter() instanceof Player -> damager = (Player) spectralArrow.getShooter();
+            default -> damager = null;
+        }
+        return damager;
     }
 
     @EventHandler
