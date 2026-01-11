@@ -224,7 +224,7 @@ public class QuestManager {
             case 3 -> new Day3Listener(this);
             case 4 -> new Day4Listener(this);
             case 5 -> new Day5Listener(this);
-            case 6 -> new Day6Listener(this);
+            case 6 -> new Day6Listener(this, plugin);
             default -> {
                 plugin.utils.warning("No hay listener para el día " + day);
                 yield null;
