@@ -1,6 +1,6 @@
 # Woof Quests
 
-Sistema de misiones por días para Minecraft (Paper), enfocado en progresión hardcore y aumento gradual de dificultad.
+Sistema de misiones por días, enfocado en progresión hardcore sin armadura y aumento gradual de dificultad.
 
 ![License](https://img.shields.io/github/license/putindeer/woof-quests?style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/putindeer/woof-quests?style=flat-square)
