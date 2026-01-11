@@ -323,6 +323,7 @@ public class QuestManager {
     public void killPlayer(UUID uuid) {
         alivePlayers.remove(uuid);
         deadPlayers.add(uuid);
+        waitingDeathPlayers.remove(uuid);
         savePlayerData(uuid);
     }
 
